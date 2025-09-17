@@ -10,81 +10,83 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/dec/learnedODE_dec_epoch19000.pth")
+MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/slope/learnedODE_slope_epoch50000.pth")
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
-config_list = [
+config_list = [ 
     dict(
-        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
+        z0=[1.4233, 5.2883, 2.6437, -1.3219, 2.6779, 0.0, 0.8, 1.8, 0.24],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="circle",
+        chosen_shape="rectangle", 
         output_name="set_a"
     ),
     dict(
-        z0=[4.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
-        DT=0.02,
+        z0=[1.8169, 5.0916, 3.1494, -1.5747,  2.6779, 0.0, 1.5, 0.8, 0.4],
+        DT=0.03,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="rectangle", 
         output_name="set_b"
     ),
     dict(
-        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+        z0=[2.1265, 4.9368, 2.3878, -1.1939,  2.6779, 0.0, 0.6, 1.8, 0.48],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="rectangle", 
         output_name="set_c"
     ),
     dict(
-        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+        z0=[2.5181, 4.7409, 0.0454, -0.0227,  2.6779, 0.0, 0.8, 2.8, 0.64],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="rectangle", 
         output_name="set_d"
     ),
     dict(
-        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
-        DT=0.02,
+        z0=[2.6875, 4.6563, 2.5096, -1.2548,  2.6779, 0.0, 1.5, 3.0, 0.5],
+        DT=0.03,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="rectangle", 
         output_name="set_e"
     ),
     dict(
-        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        z0=[2.7384, 4.6308, 2.8335, -1.4167,  2.6779, 0.0, 0.9, 1.2, 0.72],
+        DT=0.04,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle", 
         output_name="set_f"
     ),
     dict(
-        z0=[7.0, 3.0, 10.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+        z0=[2.9911, 4.5044, 0.6816, -0.3408,  2.6779, 0.0, 0.8, 1.5, 1.2],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle", 
         output_name="set_g"
     ),
     dict(
-        z0=[8.0, 8.0, 12.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+        z0=[4.2619, 3.8691, 1.3549, -0.6775,  2.6779, 0.0, 1.6, 2.0, 0.6],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle", 
         output_name="set_h"
     ),
     dict(
-        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        z0=[4.9538, 3.5231, 2.8494, -1.4247,  2.6779, 0.0, 1.0, 2.0, 2.0],
+        DT=0.03,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle", 
         output_name="set_i"
     ),
     dict(
-        z0=[10.0, 9.0, 9.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        z0=[5.4528, 3.2736, 2.6214, -1.3107,  2.6779, 0.0, 1.2, 2.0, 2.4],
+        DT=0.04,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle", 
         output_name="set_j"
     ),
 ]
+
+
 
 T_pred = 48
 H, W = 240, 360
@@ -111,7 +113,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/dec/{cfg['output_name']}")
+    out_dir = Path(f"inference/slope/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -179,12 +181,11 @@ for cfg in config_list:
             scale = s_param[t] / METER_PER_PX
 
         mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
-        print(theta,"theta[t]")
+       # print(theta,"theta[t]")
         flows[t, 0, mask] = dx
         flows[t, 1, mask] = dy
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
-
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
@@ -197,7 +198,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/dec/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference/slope/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -620,30 +621,32 @@ def main(
 
 if __name__ == "__main__":
     # 多个 prompts
+
     prompt_list = [
-    "A red sedan decelerating on a wet city street, light reflecting off the road surface, buildings in the background, captured from a fixed roadside camera.",
-    "A silver sports car slowing down on an empty rural road at dusk, wet road reflecting the orange sunset, trees and farmland along the roadside, viewed from a stationary side-angle camera.",
-    "A yellow city bus slowing down at a traffic light on an urban street, pedestrians crossing nearby, wet pavement reflecting the sky, observed from a stationary traffic camera above the street.",
-    "A red long-distance bus decelerating on a highway, road signs and streetlights nearby, distant city skyline in view, captured from a fixed roadside camera.",
-    "A blue pickup truck slowing down on a rural road, farmland and trees along the roadside, wind gently moving leaves, sunlight from the side, captured from a stationary roadside camera.",
-    "A white pickup truck decelerating on a gravel road, small dust clouds settling behind, hills and sparse vegetation in the background, viewed from a fixed side camera.",
-    "A white speedboat slowing down on a lake, waves gradually calming behind the boat, shorelines and distant mountains in view, clear sunlight, observed from a fixed camera on the shore.",
-    "A yellow small speedboat decelerating on the sea, long trails of water calming down behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, captured from a stationary pier camera.",
-    "A commercial jet decelerating after landing on the runway, runway lights visible, airport buildings in the background, heat haze above the tarmac, captured from a fixed side camera.",
-    "A gray fighter jet slowing down on a military airstrip, exhaust flames fading, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
-    "A red bowling ball rolling down a polished wooden lane and slowing before reaching the pins, reflections on the lane surface, captured from a fixed camera above the lane.",
-    "A blue bowling ball decelerating on a glossy bowling lane, spinning slightly, lane markings and pins visible in the distance, viewed from a stationary side camera."
+    "A small red toy car accelerating down a smooth wooden ramp indoors, sunlight from a nearby window casting shadows on the floor, captured from a fixed side camera parallel to the ramp.",
+    "A metal block sliding quickly down an inclined steel ramp in a laboratory, reflections on the shiny surface, equipment and cables in the background, captured from a fixed side camera parallel to the ramp.",
+    "A hardcover book accelerating down a carpeted inclined board in a classroom, chalkboard and desks in the background, captured from a fixed side camera parallel to the ramp.",
+    "A wooden cube sliding down a painted wooden ramp outdoors, grass and scattered leaves around, sunlight casting strong shadows, captured from a fixed side camera parallel to the ramp.",
+    "A glass bottle accelerating down a tiled inclined surface, reflections on the bottle and floor, with a kitchen counter and utensils in the background, captured from a fixed side camera parallel to the ramp.",
+    "A plastic storage box sliding down a metal ramp in a warehouse, shelves and stacked boxes in the background, captured from a fixed side camera parallel to the ramp.",
+    "A stack of notebooks accelerating down a wooden ramp in a study room, bookshelves and a table lamp visible in the background, captured from a fixed side camera parallel to the ramp.",
+    "A smartphone sliding quickly down a glossy inclined table surface, reflections from a nearby lamp, computer monitor and cables in the background, captured from a fixed side camera parallel to the ramp.",
+    "A ceramic mug accelerating down a wooden inclined board, kitchen tiles and shelves in the background, natural daylight streaming through a window, captured from a fixed side camera parallel to the ramp.",
+    "A plastic toy block sliding down a brightly painted ramp in a children’s playroom, colorful toys scattered in the background, captured from a fixed side camera parallel to the ramp.",
+    "A thick physics textbook accelerating down a polished wooden slope in a library corner, shelves filled with books behind, sunlight casting stripes through the window blinds, captured from a fixed side camera parallel to the ramp.",
+    "A cardboard box sliding down a metal chute outdoors, patches of grass and concrete ground visible at the bottom, cloudy sky in the background, captured from a fixed side camera parallel to the ramp."
     ]
+
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/dec/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference/slope/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/dec/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference/slope/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

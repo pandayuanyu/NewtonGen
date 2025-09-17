@@ -14,19 +14,75 @@ MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/acc/learnedODE
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
 config_list = [
+  #  dict(
+  #      z0=[1.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.5, 1.8, 0.9],
+   #     DT=0.02,
+   #     METER_PER_PX=0.05,
+   #     chosen_shape="rectangle",
+    #    output_name="set_a"
+    #),
+    #dict(
+     #   z0=[2.0, 8.0, 2.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
+      #  DT=0.02,
+       # METER_PER_PX=0.05,
+        #chosen_shape="rectangle",
+#        output_name="set_b"
+ #   ),
+  #  dict(
+   #     z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+    #    DT=0.02,
+     #   METER_PER_PX=0.05,
+      #  chosen_shape="rectangle",
+       # output_name="set_c"
+#    ),
+ #   dict(
+  ##      z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+    #    DT=0.02,
+     #   METER_PER_PX=0.05,
+      #  chosen_shape="rectangle",
+  #      output_name="set_d"
+#    ),
+ #   dict(
+  #      z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
+   #     DT=0.02,
+    #    METER_PER_PX=0.05,
+     #   chosen_shape="rectangle",
+      #  output_name="set_e"
+#    ),
+ #   dict(
+  #      z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
+   #     DT=0.02,
+    #    METER_PER_PX=0.1,
+     #   chosen_shape="rectangle",
+      #  output_name="set_f"
+#    ),
+ #   dict(
+  #      z0=[7.0, 3.0, 3.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+   #     DT=0.02,
+    #    METER_PER_PX=0.1,
+     #   chosen_shape="rectangle",
+      #  output_name="set_g"
+  #  ),
+   # dict(
+    #    z0=[8.0, 8.0, 2.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+     #   DT=0.02,
+      #  METER_PER_PX=0.1,
+       # chosen_shape="rectangle",
+        #output_name="set_h"
+#    ),
     dict(
-        z0=[2.0, 3.0, 6.0, 0.0, 0.0, 0.0, 0.4, 0.8, 0.32],
+        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
         DT=0.02,
-        METER_PER_PX=0.05,
+        METER_PER_PX=0.1,
         chosen_shape="rectangle",
-        output_name="set_a"
+        output_name="set_i"
     ),
     dict(
-        z0=[4.0, 8.0, 3.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
+        z0=[10.0, 9.0, 5.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
         DT=0.02,
-        METER_PER_PX=0.05,
+        METER_PER_PX=0.1,
         chosen_shape="rectangle",
-        output_name="set_b"
+        output_name="set_j"
     ),
 ]
 
@@ -55,7 +111,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/acc/{cfg['output_name']}")
+    out_dir = Path(f"inference2/acc/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -68,17 +124,28 @@ for cfg in config_list:
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
 
-    def make_mask(shape, X, Y, cx, cy, scale):
+
+    def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
             return (X - cx) ** 2 + (Y - cy) ** 2 <= scale**2
         elif shape == "square":
             return (np.abs(X - cx) <= scale) & (np.abs(Y - cy) <= scale)
         elif shape == "rectangle":
             short_edge, long_edge = scale
-            return (np.abs(X - cx) <= long_edge/2) & (np.abs(Y - cy) <= short_edge/2)
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (np.abs(X_rot) <= long_edge/2) & (np.abs(Y_rot) <= short_edge/2)
         elif shape == "ellipse":
             short_axis, long_axis = scale
-            return ((X - cx)**2)/(long_axis**2) + ((Y - cy)**2)/(short_axis**2) <= 1
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (X_rot**2)/(long_axis**2) + (Y_rot**2)/(short_axis**2) <= 1
         elif shape == "triangle":
             Xr, Yr = X - cx, Y - cy
             h = np.sqrt(3) * scale
@@ -97,8 +164,9 @@ for cfg in config_list:
 
     flows = np.zeros((T_pred, 2, H, W), dtype=np.float32)
     Y, X = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
-    s_param = np.sqrt(dynamics[:, 6])
+    s_param = dynamics[:, 6]
     l_param = dynamics[:, 7]
+    theta = dynamics[:, 4]
 
     for t in range(T_pred - 1):
         cx, cy = traj_px[t, 0], traj_px[t, 1]
@@ -110,11 +178,13 @@ for cfg in config_list:
         else:
             scale = s_param[t] / METER_PER_PX
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale)
+        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
+       # print(theta,"theta[t]")
         flows[t, 0, mask] = dx
         flows[t, 1, mask] = dy
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
+
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
@@ -127,7 +197,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/acc/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference2/acc/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -550,20 +620,32 @@ def main(
 
 if __name__ == "__main__":
     # 多个 prompts
+
     prompt_list = [
-        "A city bus driving on a flat road, starting slowly and then gradually speeding up. The bus is viewed from the side, moving smoothly from left to right across the frame, with clear acceleration. Background stays static, only the bus shows motion.",
-        "A blue bus driving on a flat road, starting slowly and then gradually speeding up. The bus is viewed from the side with fixed camera."
+    "A red sedan accelerating on a sunny highway, with faint shadows of guardrails on the side, and distant blurred mountains in the background, captured from a fixed camera positioned roadside.",
+    "A black off-road SUV accelerating in a straight line on sandy terrain, with continuous sand dunes in the background, a few white clouds in the sky, sunlight slanting, kicking up fine sand particles, viewed from a stationary side-angle camera.",
+    "A yellow city bus accelerating in a straight line on an urban street, buildings reflecting light, wet road surface reflecting the sky, observed from a fixed traffic camera above the street.",
+    "A silver sedan accelerating on a rural road, green trees and farmland along the roadside, wind gently rustling the leaves, sunlight hitting the car from the side, slight reflections on the car body, captured from a stationary roadside camera.",
+    "A blue off-road SUV accelerating on a muddy road, wheels splashing mud, background of forest and distant mountains, cloudy weather with dappled light, viewed from a fixed side camera.",
+    "A white speedboat accelerating in a straight line on a lake, white waves trailing behind the boat, lake surface reflecting the sky and nearby trees, distant mountains in view, clear sunlight, captured from a stationary camera on the shore.",
+    "A red long-distance bus accelerating on a highway, with road signs and streetlights nearby, distant city skyline in the background, clear reflections on the bus windows, observed from a fixed roadside camera.",
+    "A dark gray sports car accelerating in a straight line on an empty road at dusk, wet road reflecting light, orange sunset casting colors on the car, slight wind rustling the grass along the roadside, viewed from a stationary side-angle camera.",
+    "A white commercial jet accelerating down the runway for takeoff, runway lights and markings visible, airport buildings in the background, clear sunny sky, slight heat haze above the tarmac, captured from a fixed camera at the runway side.",
+    "A gray fighter jet accelerating along a military airstrip, exhaust flames visible at the tail, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
+    "A green four-wheel-drive SUV accelerating on a rugged mountain road, tires kicking up small dust clouds and pebbles, background of steep slopes and sparse vegetation, clear weather, captured from a fixed roadside camera.",
+    "A yellow small speedboat accelerating in a straight line on the sea, long trails of water behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, sunlight reflecting off the water, viewed from a stationary camera on a pier."
     ]
+
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/acc/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference2/acc/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/acc/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference2/acc/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

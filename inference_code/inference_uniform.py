@@ -15,10 +15,10 @@ MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/uniform/learne
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
 config_list = [
     dict(
-        z0=[2.0, 3.0, 2.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
+        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_a"
     ),
     dict(
@@ -27,6 +27,62 @@ config_list = [
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_b"
+    ),
+    dict(
+        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle",
+        output_name="set_c"
+    ),
+    dict(
+        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle",
+        output_name="set_d"
+    ),
+    dict(
+        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="rectangle",
+        output_name="set_e"
+    ),
+    dict(
+        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="rectangle",
+        output_name="set_f"
+    ),
+    dict(
+        z0=[7.0, 3.0, 6.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="rectangle",
+        output_name="set_g"
+    ),
+    dict(
+        z0=[8.0, 8.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="rectangle",
+        output_name="set_h"
+    ),
+    dict(
+        z0=[9.0, 7.0, 10.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="rectangle",
+        output_name="set_i"
+    ),
+    dict(
+        z0=[10.0, 9.0, 12.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="rectangle",
+        output_name="set_j"
     ),
 ]
 
@@ -68,17 +124,28 @@ for cfg in config_list:
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
 
-    def make_mask(shape, X, Y, cx, cy, scale):
+
+    def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
             return (X - cx) ** 2 + (Y - cy) ** 2 <= scale**2
         elif shape == "square":
             return (np.abs(X - cx) <= scale) & (np.abs(Y - cy) <= scale)
         elif shape == "rectangle":
             short_edge, long_edge = scale
-            return (np.abs(X - cx) <= long_edge/2) & (np.abs(Y - cy) <= short_edge/2)
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (np.abs(X_rot) <= long_edge/2) & (np.abs(Y_rot) <= short_edge/2)
         elif shape == "ellipse":
             short_axis, long_axis = scale
-            return ((X - cx)**2)/(long_axis**2) + ((Y - cy)**2)/(short_axis**2) <= 1
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (X_rot**2)/(long_axis**2) + (Y_rot**2)/(short_axis**2) <= 1
         elif shape == "triangle":
             Xr, Yr = X - cx, Y - cy
             h = np.sqrt(3) * scale
@@ -97,8 +164,9 @@ for cfg in config_list:
 
     flows = np.zeros((T_pred, 2, H, W), dtype=np.float32)
     Y, X = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
-    s_param = np.sqrt(dynamics[:, 6])
+    s_param = dynamics[:, 6]
     l_param = dynamics[:, 7]
+    theta = dynamics[:, 4]
 
     for t in range(T_pred - 1):
         cx, cy = traj_px[t, 0], traj_px[t, 1]
@@ -110,7 +178,8 @@ for cfg in config_list:
         else:
             scale = s_param[t] / METER_PER_PX
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale)
+        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
+        print(theta,"theta[t]")
         flows[t, 0, mask] = dx
         flows[t, 1, mask] = dy
 
@@ -551,8 +620,18 @@ def main(
 if __name__ == "__main__":
     # 多个 prompts
     prompt_list = [
-        "A red car drives across a stright road, filmed from the side view.",
-        "A billiard ball rolling on a blue pool table, filmed from the side view. The camera is fixed, background stays static, only the ball shows motion."
+        "A red sedan moving at constant speed along a sunny highway, roadside guardrails visible, distant mountains in the background, captured from a fixed roadside camera.",
+        "A blue pickup truck traveling at steady speed on a gravel rural road, farmland and trees along the roadside, sunlight casting soft shadows, observed from a stationary side camera.",
+        "A soccer ball rolling at constant speed across a green grass field, white boundary lines visible, goalposts in the background, captured from a fixed side-angle camera.",
+        "A bowling ball moving steadily down a polished wooden lane, lane markings and pins in the distance, reflections on the surface, observed from a stationary camera above the lane.",
+        "A white commercial jet flying at a constant horizontal speed above a runway, airport buildings in the background, partly cloudy sky, captured from a fixed side camera.",
+        "A gray fighter jet gliding at steady horizontal speed above a military airstrip, mountains and hangars in the distance, viewed from a stationary side-angle camera.",
+        "A yellow speedboat cruising at constant speed on a calm lake, small waves trailing behind, shoreline and distant trees visible, captured from a fixed camera on the shore.",
+        "A white yacht moving at steady speed along the sea, slightly wavy water surface, distant coastline and sailboats in view, observed from a stationary pier camera.",
+        "A toy car moving at constant speed on a wooden floor, scattered blocks and a rug in the background, captured from a fixed side camera at table height.",
+        "A small toy train traveling steadily along tracks on a living room floor, bookshelves and furniture visible in the background, viewed from a stationary side-angle camera.",
+        "A cardboard box sliding at constant speed on a warehouse floor, shelves and crates visible in the background, captured from a fixed side camera.",
+        "A plastic storage container moving steadily on a smooth concrete surface in a garage, tools and bicycles in the background, observed from a stationary side-angle camera."
     ]
 
     outputs = []

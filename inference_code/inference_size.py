@@ -10,81 +10,83 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/dec/learnedODE_dec_epoch19000.pth")
+MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/size/learnedODE_size_epoch40000.pth")
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
+
 config_list = [
     dict(
-        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
+        z0=[6.4833, 5.5226, 0.0, 0.0, 0.0, 0.0, 0.2008, 0.2008, 0.0632],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="circle",
         output_name="set_a"
     ),
     dict(
-        z0=[4.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
+        z0=[7.1445, 6.5251, 0.0, 0.0, 0.0, 0.0, 0.4196, 0.4196, 0.2766],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_b"
     ),
     dict(
-        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+        z0=[7.7653, 5.6317, 0.0, 0.0, 0.0, 0.0, 0.5246, 0.5246, 0.4322],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_c"
     ),
     dict(
-        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+        z0=[7.8777, 5.4010, 0.0, 0.0, 0.0, 0.0, 0.3218, 0.3218, 0.1628],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_d"
     ),
     dict(
-        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
+        z0=[8.3346, 6.7342, 0.0, 0.0, 0.0, 0.0, 0.5936, 0.5936, 0.5534],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_e"
     ),
     dict(
-        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
+        z0=[9.2809, 5.9461, 0.0, 0.0, 0.0, 0.0, 0.1276, 0.1276, 1.9976],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
         output_name="set_f"
     ),
     dict(
-        z0=[7.0, 3.0, 10.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+        z0=[10.0759, 5.0603, 0.0, 0.0, 0.0, 0.0, 0.4828, 0.4828, 0.366],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
         output_name="set_g"
     ),
     dict(
-        z0=[8.0, 8.0, 12.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+        z0=[11.4364, 5.0559, 0.0, 0.0, 0.0, 0.0, 0.2457, 0.2457, 0.328],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
         output_name="set_h"
     ),
     dict(
-        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
+        z0=[11.4629, 6.2376, 0.0, 0.0, 0.0, 0.0, 1.12, 1.12, 1.9702],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
         output_name="set_i"
     ),
     dict(
-        z0=[10.0, 9.0, 9.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
+        z0=[11.9719, 5.7067, 0.0, 0.0, 0.0, 0.0, 0.124, 0.124, 2.2332],
         DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
         output_name="set_j"
     ),
 ]
+
 
 T_pred = 48
 H, W = 240, 360
@@ -111,7 +113,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/dec/{cfg['output_name']}")
+    out_dir = Path(f"inference/size/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -123,7 +125,6 @@ for cfg in config_list:
     traj_px[:, 2] = traj_world[:, 2] / METER_PER_PX
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
-
 
     def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
@@ -168,22 +169,31 @@ for cfg in config_list:
     l_param = dynamics[:, 7]
     theta = dynamics[:, 4]
 
+
+    flows = np.zeros((T_pred, 2, H, W), dtype=np.float32) 
+    Y, X = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
+    speed_factor = 2.0  # 控制扩张速度
+
+    # radius_seq = dynamics[:, 6] / METER_PER_PX  # 如果你半径信息存在 dynamics[:,6]
+    radius_seq = s_param / METER_PER_PX  # 或直接用你已有的 s_param
+
     for t in range(T_pred - 1):
         cx, cy = traj_px[t, 0], traj_px[t, 1]
-        nx, ny = traj_px[t + 1, 0], traj_px[t + 1, 1]
-        dx, dy = nx - cx, ny - cy
+        radius = radius_seq[t]
 
-        if chosen_shape in ["rectangle", "ellipse"]:
-            scale = (s_param[t] / METER_PER_PX, l_param[t] / METER_PER_PX)
-        else:
-            scale = s_param[t] / METER_PER_PX
+        dist_x = X - cx
+        dist_y = Y - cy
+        mask = dist_x**2 + dist_y**2 <= radius**2
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
-        print(theta,"theta[t]")
-        flows[t, 0, mask] = dx
-        flows[t, 1, mask] = dy
+        flows[t, 0][mask] = dist_x[mask] / (radius + 1e-5) * speed_factor
+        flows[t, 1][mask] = dist_y[mask] / (radius + 1e-5) * speed_factor
+
+
+
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
+
+
 
 
     # ---------------- STEP 2: NoiseWarp ----------------
@@ -197,7 +207,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/dec/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference/size/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -620,30 +630,33 @@ def main(
 
 if __name__ == "__main__":
     # 多个 prompts
+
+
     prompt_list = [
-    "A red sedan decelerating on a wet city street, light reflecting off the road surface, buildings in the background, captured from a fixed roadside camera.",
-    "A silver sports car slowing down on an empty rural road at dusk, wet road reflecting the orange sunset, trees and farmland along the roadside, viewed from a stationary side-angle camera.",
-    "A yellow city bus slowing down at a traffic light on an urban street, pedestrians crossing nearby, wet pavement reflecting the sky, observed from a stationary traffic camera above the street.",
-    "A red long-distance bus decelerating on a highway, road signs and streetlights nearby, distant city skyline in view, captured from a fixed roadside camera.",
-    "A blue pickup truck slowing down on a rural road, farmland and trees along the roadside, wind gently moving leaves, sunlight from the side, captured from a stationary roadside camera.",
-    "A white pickup truck decelerating on a gravel road, small dust clouds settling behind, hills and sparse vegetation in the background, viewed from a fixed side camera.",
-    "A white speedboat slowing down on a lake, waves gradually calming behind the boat, shorelines and distant mountains in view, clear sunlight, observed from a fixed camera on the shore.",
-    "A yellow small speedboat decelerating on the sea, long trails of water calming down behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, captured from a stationary pier camera.",
-    "A commercial jet decelerating after landing on the runway, runway lights visible, airport buildings in the background, heat haze above the tarmac, captured from a fixed side camera.",
-    "A gray fighter jet slowing down on a military airstrip, exhaust flames fading, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
-    "A red bowling ball rolling down a polished wooden lane and slowing before reaching the pins, reflections on the lane surface, captured from a fixed camera above the lane.",
-    "A blue bowling ball decelerating on a glossy bowling lane, spinning slightly, lane markings and pins visible in the distance, viewed from a stationary side camera."
+    "A red helium balloon gradually inflating in a sunny park, children playing in the background, trees casting soft shadows, captured from a stationary side camera.",
+    "A blue water balloon slowly expanding on a kitchen counter, sunlight streaming through the window, utensils and fruit bowl nearby, observed from a fixed overhead camera.",
+    "A yellow birthday balloon inflating on a party table, colorful confetti scattered around, party decorations hanging in the background, viewed from a side-angle camera.",
+    "A green balloon gradually inflating on a street vendor's cart, urban buildings and pedestrians passing by, sunlight reflecting off nearby windows, captured from a sidewalk camera.",
+    "A pink balloon inflating on a balcony, city skyline visible in the distance, potted plants and railings in the foreground, observed from a fixed camera at eye level.",
+    "A transparent water balloon expanding in a laboratory, scientific instruments and glassware around, bright fluorescent lights overhead, captured from a fixed top-down camera.",
+    "An orange balloon gradually inflating in a backyard, grass and flowers around, a dog running in the background, sunlight creating natural shadows, viewed from a side-angle camera.",
+    "A purple balloon slowly inflating on a wooden picnic table near a lake, reflections of trees and water on the table, distant mountains visible, captured from a fixed camera on the shore.",
+    "A white balloon inflating in a cozy living room, sunlight coming through curtains, sofa and bookshelf visible in the background, observed from a fixed corner camera.",
+    "A metallic silver balloon gradually expanding in a festive hall, fairy lights and streamers in the background, colorful reflections on the floor, captured from a stationary overhead camera.",
+    "A multicolored balloon inflating in a school playground, children running around, slides and swings visible, sunlight casting long shadows, observed from a high-angle camera.",
+    "A large red party balloon slowly inflating on a balcony terrace, city rooftops and distant skyscrapers visible, potted plants and railing in the foreground, captured from a side camera."
     ]
+
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/dec/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference/size/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/dec/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference/size/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

@@ -10,81 +10,83 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/dec/learnedODE_dec_epoch19000.pth")
+MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/rotate/learnedODE_rotate_epoch19000.pth")
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
 config_list = [
     dict(
-        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
+        z0=[6.4555, 5.5015, 0.0, 0.0, 0.0, 1.6282, 0.9741, 3.799, 3.7003],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="circle",
+        chosen_shape="rectangle",
         output_name="set_a"
     ),
     dict(
-        z0=[4.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
+        z0=[6.9623, 5.1832, 0.0, 0.0, 0.75, 2.6332, 0.5743, 3.5814, 2.0553],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_b"
     ),
     dict(
-        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+        z0=[7.0343, 6.4127, 0.0, 0.0, 1.57, 2.552, 0.8842, 2.4756, 2.1881],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_c"
     ),
     dict(
-        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+        z0=[7.2112, 6.1823, 0.0, 0.0, 0.0, 1.2813, 0.7189, 3.3744, 2.4265],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_d"
     ),
     dict(
-        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
+        z0=[8.7657, 6.4994, 0.0, 0.0, 0.0, 3.4044, 0.5123, 2.5514, 1.3057],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_e"
     ),
     dict(
-        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
+        z0=[9.4828, 5.3771, 0.0, 0.0, 0.0, 2.7272, 0.8675, 3.2521, 2.8205],
         DT=0.02,
-        METER_PER_PX=0.1,
+        METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_f"
     ),
     dict(
-        z0=[7.0, 3.0, 10.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+        z0=[9.8689, 6.9942, 0.0, 0.0, 0.0, 3.2026, 0.4012, 2.779, 1.1158],
         DT=0.02,
-        METER_PER_PX=0.1,
+        METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_g"
     ),
     dict(
-        z0=[8.0, 8.0, 12.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+        z0=[10.1706, 5.2484, 0.0, 0.0, 0.0, 2.7752, 0.9234, 2.0805, 1.9229],
         DT=0.02,
-        METER_PER_PX=0.1,
+        METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_h"
     ),
     dict(
-        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
+        z0=[10.3713, 5.6215, 0.0, 0.0, 0.0, 3.2447, 0.6619, 2.7134, 1.7945],
         DT=0.02,
-        METER_PER_PX=0.1,
+        METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_i"
     ),
     dict(
-        z0=[10.0, 9.0, 9.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
+        z0=[11.2901, 5.9212, 0.0, 0.0, 0.0, 3.0598, 0.7583, 2.7544, 2.0884],
         DT=0.02,
-        METER_PER_PX=0.1,
+        METER_PER_PX=0.05,
         chosen_shape="rectangle",
         output_name="set_j"
     ),
 ]
+
+
 
 T_pred = 48
 H, W = 240, 360
@@ -111,7 +113,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/dec/{cfg['output_name']}")
+    out_dir = Path(f"inference/rotate/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -123,7 +125,6 @@ for cfg in config_list:
     traj_px[:, 2] = traj_world[:, 2] / METER_PER_PX
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
-
 
     def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
@@ -168,20 +169,45 @@ for cfg in config_list:
     l_param = dynamics[:, 7]
     theta = dynamics[:, 4]
 
+
     for t in range(T_pred - 1):
         cx, cy = traj_px[t, 0], traj_px[t, 1]
         nx, ny = traj_px[t + 1, 0], traj_px[t + 1, 1]
-        dx, dy = nx - cx, ny - cy
 
         if chosen_shape in ["rectangle", "ellipse"]:
-            scale = (s_param[t] / METER_PER_PX, l_param[t] / METER_PER_PX)
-        else:
-            scale = s_param[t] / METER_PER_PX
+            # 局部旋转光流
+            length, width = l_param[t] / METER_PER_PX, s_param[t] / METER_PER_PX  # 注意顺序：长边沿x方向
+            omega = theta[t+1] - theta[t]  # 或直接用 dynamics[:,4] 差值计算每帧旋转角
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
-        print(theta,"theta[t]")
-        flows[t, 0, mask] = dx
-        flows[t, 1, mask] = dy
+            # 旋转矩阵
+            cos_theta, sin_theta = np.cos(theta[t]), np.sin(theta[t])
+            cos_theta_next, sin_theta_next = np.cos(theta[t+1]), np.sin(theta[t+1])
+
+            # 相对中心坐标
+            x_rel, y_rel = X - cx, Y - cy
+            x_rot =  cos_theta*x_rel - sin_theta*y_rel
+            y_rot =  sin_theta*x_rel + cos_theta*y_rel
+
+
+            mask = (np.abs(x_rot) <= length/2) & (np.abs(y_rot) <= width/2)
+
+            x_rot_next = cos_theta_next*x_rel + sin_theta_next*y_rel
+            y_rot_next = -sin_theta_next*x_rel + cos_theta_next*y_rel
+
+            flows[t, 0, mask] = x_rot_next[mask] - x_rot[mask] + (nx - cx)  # 加上质心平移
+            flows[t, 1, mask] = y_rot_next[mask] - y_rot[mask] + (ny - cy)
+
+        else:
+            # 其他形状依然用质心平移
+            dx, dy = nx - cx, ny - cy
+            if chosen_shape in ["circle","square","triangle","diamond","pentagon","hexagon"]:
+                scale = s_param[t] / METER_PER_PX
+            mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
+            flows[t, 0, mask] = dx
+            flows[t, 1, mask] = dy
+
+
+
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
 
@@ -197,7 +223,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/dec/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference/rotate/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -621,29 +647,30 @@ def main(
 if __name__ == "__main__":
     # 多个 prompts
     prompt_list = [
-    "A red sedan decelerating on a wet city street, light reflecting off the road surface, buildings in the background, captured from a fixed roadside camera.",
-    "A silver sports car slowing down on an empty rural road at dusk, wet road reflecting the orange sunset, trees and farmland along the roadside, viewed from a stationary side-angle camera.",
-    "A yellow city bus slowing down at a traffic light on an urban street, pedestrians crossing nearby, wet pavement reflecting the sky, observed from a stationary traffic camera above the street.",
-    "A red long-distance bus decelerating on a highway, road signs and streetlights nearby, distant city skyline in view, captured from a fixed roadside camera.",
-    "A blue pickup truck slowing down on a rural road, farmland and trees along the roadside, wind gently moving leaves, sunlight from the side, captured from a stationary roadside camera.",
-    "A white pickup truck decelerating on a gravel road, small dust clouds settling behind, hills and sparse vegetation in the background, viewed from a fixed side camera.",
-    "A white speedboat slowing down on a lake, waves gradually calming behind the boat, shorelines and distant mountains in view, clear sunlight, observed from a fixed camera on the shore.",
-    "A yellow small speedboat decelerating on the sea, long trails of water calming down behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, captured from a stationary pier camera.",
-    "A commercial jet decelerating after landing on the runway, runway lights visible, airport buildings in the background, heat haze above the tarmac, captured from a fixed side camera.",
-    "A gray fighter jet slowing down on a military airstrip, exhaust flames fading, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
-    "A red bowling ball rolling down a polished wooden lane and slowing before reaching the pins, reflections on the lane surface, captured from a fixed camera above the lane.",
-    "A blue bowling ball decelerating on a glossy bowling lane, spinning slightly, lane markings and pins visible in the distance, viewed from a stationary side camera."
+    "A wooden ruler rotating smoothly around its center, viewed from a fixed top-down camera.",
+    "A metal ruler spinning in mid-air, captured from a fixed overhead camera.",
+    "A pencil rotating smoothly on a wooden desk, casting long shadows from sunlight streaming through the window, viewed from a stationary top-down camera, with papers and books scattered nearby.",
+    "A slim wooden stick rotating on a grassy field, subtle motion blur, wildflowers and leaves around, captured from a fixed top-down camera.",
+    "A rolling pin rotating on a floured countertop, surrounded by baking ingredients, captured clearly from a fixed overhead camera.",
+    "A toothbrush spinning on a bathroom sink, with soap and towels in the background, subtle reflections, viewed from a fixed top-down camera.",
+    "A thin ruler rotating in mid-air above a classroom desk, books and notebooks in the background, gentle motion blur, captured from a fixed overhead camera.",
+    "A chopstick spinning slowly above a dining table, dishes and utensils around, reflections on the polished surface, captured from a fixed top-down camera.",
+    "A paintbrush rotating in mid-air above an art desk, colorful paint tubes scattered nearby, slight blur from rotation, captured from a fixed overhead camera.",
+    "A knitting needle rotating above a soft fabric surface, with yarn and small scissors nearby, subtle shadows, viewed from a stationary top-down camera.",
+    "A metal rod spinning in a workshop, tools and wooden planks in the background, sparks or dust particles visible, captured from a fixed overhead camera.",
+    "A slim wooden dowel rotating on a picnic table outdoors, leaves, sunlight, and scattered plates nearby, subtle motion blur, captured from a fixed top-down camera."
     ]
+
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/dec/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference/rotate/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/dec/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference/rotate/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

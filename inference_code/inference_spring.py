@@ -10,78 +10,78 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/dec/learnedODE_dec_epoch19000.pth")
+MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/spring/learnedODE_spring_epoch50000.pth")
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
 config_list = [
     dict(
-        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
-        DT=0.02,
+        z0=[2.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
+        DT=0.03,
         METER_PER_PX=0.05,
         chosen_shape="circle",
         output_name="set_a"
     ),
     dict(
-        z0=[4.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
+        z0=[4.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
         DT=0.02,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="circle",
         output_name="set_b"
     ),
     dict(
-        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
-        DT=0.02,
+        z0=[3.0, 7.0, 0.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
+        DT=0.03,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_c"
     ),
     dict(
-        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
-        DT=0.02,
+        z0=[4.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
+        DT=0.03,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_d"
     ),
     dict(
-        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
-        DT=0.02,
+        z0=[5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
+        DT=0.04,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_e"
     ),
     dict(
-        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
+        z0=[6.0, 8.0, 0.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
         DT=0.02,
         METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_f"
     ),
     dict(
-        z0=[7.0, 3.0, 10.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
+        z0=[7.0, 7.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
         DT=0.02,
         METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_g"
     ),
     dict(
-        z0=[8.0, 8.0, 12.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
-        DT=0.02,
+        z0=[8.0, 8.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
+        DT=0.05,
         METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_h"
     ),
     dict(
-        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
-        DT=0.02,
+        z0=[9.0, 10.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
+        DT=0.04,
         METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_i"
     ),
     dict(
-        z0=[10.0, 9.0, 9.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
-        DT=0.02,
+        z0=[10.0, 12.0, 0.0, 0.0, 0.0, 0.0, 2.5, 2.5, 6.25],
+        DT=0.05,
         METER_PER_PX=0.1,
-        chosen_shape="rectangle",
+        chosen_shape="square",
         output_name="set_j"
     ),
 ]
@@ -111,7 +111,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/dec/{cfg['output_name']}")
+    out_dir = Path(f"inference/spring/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -123,7 +123,6 @@ for cfg in config_list:
     traj_px[:, 2] = traj_world[:, 2] / METER_PER_PX
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
-
 
     def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
@@ -197,7 +196,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/dec/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference/spring/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -621,29 +620,30 @@ def main(
 if __name__ == "__main__":
     # 多个 prompts
     prompt_list = [
-    "A red sedan decelerating on a wet city street, light reflecting off the road surface, buildings in the background, captured from a fixed roadside camera.",
-    "A silver sports car slowing down on an empty rural road at dusk, wet road reflecting the orange sunset, trees and farmland along the roadside, viewed from a stationary side-angle camera.",
-    "A yellow city bus slowing down at a traffic light on an urban street, pedestrians crossing nearby, wet pavement reflecting the sky, observed from a stationary traffic camera above the street.",
-    "A red long-distance bus decelerating on a highway, road signs and streetlights nearby, distant city skyline in view, captured from a fixed roadside camera.",
-    "A blue pickup truck slowing down on a rural road, farmland and trees along the roadside, wind gently moving leaves, sunlight from the side, captured from a stationary roadside camera.",
-    "A white pickup truck decelerating on a gravel road, small dust clouds settling behind, hills and sparse vegetation in the background, viewed from a fixed side camera.",
-    "A white speedboat slowing down on a lake, waves gradually calming behind the boat, shorelines and distant mountains in view, clear sunlight, observed from a fixed camera on the shore.",
-    "A yellow small speedboat decelerating on the sea, long trails of water calming down behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, captured from a stationary pier camera.",
-    "A commercial jet decelerating after landing on the runway, runway lights visible, airport buildings in the background, heat haze above the tarmac, captured from a fixed side camera.",
-    "A gray fighter jet slowing down on a military airstrip, exhaust flames fading, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
-    "A red bowling ball rolling down a polished wooden lane and slowing before reaching the pins, reflections on the lane surface, captured from a fixed camera above the lane.",
-    "A blue bowling ball decelerating on a glossy bowling lane, spinning slightly, lane markings and pins visible in the distance, viewed from a stationary side camera."
+    "A red rubber ball accelerates in a straight line along a smooth wooden floor, pulled by a thin string, captured from a fixed overhead camera.",
+    "A transparent blue glass ball slides in a straight line along a polished marble surface, pulled by a rubber band, recorded by a fixed top-down camera.",
+    "A bright yellow plastic ball moves in a straight line across a flat white surface under wind force, captured from a fixed overhead camera.",
+    "A shiny cylindrical metal weight accelerates in a straight line down a smooth ramp, recorded by a top-down camera.",
+    "A square iron block slides in a straight line along a rough concrete floor, pulled by an elastic cord, captured by a fixed overhead camera.",
+    "A heavy wooden block accelerates in a straight line along a tiled floor, pulled by a thin string, recorded from a fixed top-down camera.",
+    "A rough gray stone block slides in a straight line across sandy ground under wind force, captured by a fixed overhead camera.",
+    "A large solid iron block accelerates in a straight line along a smooth surface, pulled by an elastic cord, recorded by a downward-facing stationary camera.",
+    "A green rubber ball floats on a shallow water surface, tethered by a rubber band or thin string, moving in a straight line, captured by a top-down camera with ripples visible.",
+    "A metallic weight slides in a straight line along an icy surface, pushed by wind, with low friction, recorded by a fixed overhead camera.",
+    "A rectangular heavy block accelerates in a straight line along coarse sand, pulled by an elastic cord, captured from a bird’s-eye perspective.",
+    "A small iron sphere slides in a straight line along a flat white tabletop, pulled by a thin string, recorded by a fixed top-down camera."
     ]
+
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/dec/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference/spring/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/dec/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference/spring/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

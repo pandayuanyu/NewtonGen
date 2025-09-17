@@ -10,81 +10,87 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/dec/learnedODE_dec_epoch19000.pth")
+MODEL_PATH = Path("/home/yuan418/data/project/Newtongen_ICLR/runs/circle/learnedODE_circle_epoch19000.pth")
 
 # 这里可以定义多个配置，每个dict对应一组z0/DT/METER_PER_PX/chosen_shape
 config_list = [
     dict(
-        z0=[2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.6, 1.2, 0.72],
-        DT=0.02,
+        z0=[6.9103, 4.2777, 2.8141, -0.7615, -0.2643, 0.644, 0.8122, 1.122, 0.9887],
+        DT=0.1,
         METER_PER_PX=0.05,
         chosen_shape="circle",
-        output_name="set_a"
+        output_name="sample_a"
     ),
     dict(
-        z0=[4.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5],
-        DT=0.02,
+        z0=[7.3282, 4.1766, 3.2406, -0.6925, -0.2105, 1.4142, 0.8222, 1.122, 0.9887],
+        DT=0.1,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_b"
+        chosen_shape="circle",
+        output_name="sample_b"
     ),
     dict(
-        z0=[3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.8, 1.8, 1.4],
-        DT=0.02,
+        z0=[4.5904, 5.325, 6.6113, -4.3675, -0.5838, 0.9905, 0.5122, 1.122, 0.9887],
+        DT=0.1,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_c"
+        chosen_shape="circle",
+        output_name="sample_c"
     ),
     dict(
-        z0=[4.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.6, 1.0, 0.6],
-        DT=0.02,
+        z0=[4.6786, 5.2676, 0.229, -0.147, -0.5706, 1.34, 3.3122, 1.122, 0.9887],
+        DT=0.1,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_d"
+        chosen_shape="circle",
+        output_name="sample_d"
     ),
     dict(
-        z0=[5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.8, 1.5, 1.2],
-        DT=0.02,
+        z0=[4.7248, 5.2382, 0.6782, -0.4288, -0.5638, 1.8003, 2.5822, 1.122, 0.9887],
+        DT=0.1,
         METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_e"
+        chosen_shape="circle",
+        output_name="sample_e"
     ),
     dict(
-        z0=[6.0, 2.0, 8.0, 0.0, 0.0, 0.0, 1.7, 4.8, 0.32],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
-        output_name="set_f"
+        z0=[4.7324, 5.2334, 1.7262, -1.0887, -0.5627, 2.2551, 2.6622, 1.122, 0.9887],
+        DT=0.1,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="sample_f"
     ),
     dict(
-        z0=[7.0, 3.0, 10.0, 0.0, 0.0, 0.0, 1.0, 2.8, 2.8],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
-        output_name="set_g"
+        z0=[5.677, 4.7228, 2.1541, -0.9836, -0.4284, 4.296, 0.7122, 1.122, 0.9887],
+        DT=0.1,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="sample_g"
     ),
     dict(
-        z0=[8.0, 8.0, 12.0, 0.0, 0.0, 0.0, 2.0, 4.8, 9.6],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
-        output_name="set_h"
+        z0=[5.7684, 4.6817, 5.8541, -2.585, -0.4158, 1.7999, 1.5122, 1.122, 0.9887],
+        DT=0.1,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="sample_h"
     ),
     dict(
-        z0=[9.0, 7.0, 8.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
-        output_name="set_i"
+        z0=[5.7918, 4.6715, 0.6892, -0.3017, -0.4126, 2.94, 0.9122, 1.122, 0.9887],
+        DT=0.1,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="sample_i"
     ),
     dict(
-        z0=[10.0, 9.0, 9.0, 0.0, 0.0, 0.0, 2.5, 5.0, 12.5],
-        DT=0.02,
-        METER_PER_PX=0.1,
-        chosen_shape="rectangle",
-        output_name="set_j"
+        z0=[5.9636, 4.5986, 5.6908, -2.3347, -0.3893, 4.7689, 0.7122, 1.122, 0.9887],
+        DT=0.1,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="sample_j"
     ),
 ]
+
+
+
+
+
+
 
 T_pred = 48
 H, W = 240, 360
@@ -111,7 +117,7 @@ for cfg in config_list:
         dynamics = model(z0, ts)
     dynamics = dynamics.squeeze(0).cpu().numpy()
 
-    out_dir = Path(f"inference/dec/{cfg['output_name']}")
+    out_dir = Path(f"inference/circle/{cfg['output_name']}")
     out_dir.mkdir(parents=True, exist_ok=True)
     torch.save(torch.from_numpy(dynamics), out_dir / f"inference_dynamics_{cfg['output_name']}.pt")
     np.save(out_dir / f"dynamics_{cfg['output_name']}_world.npy", dynamics[:, :9])
@@ -123,7 +129,6 @@ for cfg in config_list:
     traj_px[:, 2] = traj_world[:, 2] / METER_PER_PX
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
-
 
     def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
@@ -162,26 +167,40 @@ for cfg in config_list:
         else:
             raise ValueError(f"Unknown shape: {shape}")
 
+
+
     flows = np.zeros((T_pred, 2, H, W), dtype=np.float32)
     Y, X = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
-    s_param = dynamics[:, 6]
-    l_param = dynamics[:, 7]
-    theta = dynamics[:, 4]
+
+    pivot = np.array([9.0, 6.0])  # 默认 pivot，单位米
+    L = 4.0                        # orbit radius
+
+    theta = dynamics[:, 4]  # 阻尼摆角度
+    omega = dynamics[:, 5]  # 角速度
 
     for t in range(T_pred - 1):
-        cx, cy = traj_px[t, 0], traj_px[t, 1]
-        nx, ny = traj_px[t + 1, 0], traj_px[t + 1, 1]
-        dx, dy = nx - cx, ny - cy
+    # 当前摆端位置
+        x_t = pivot[0] + L * np.sin(theta[t])
+        y_t = pivot[1] - L * np.cos(theta[t])
 
-        if chosen_shape in ["rectangle", "ellipse"]:
-            scale = (s_param[t] / METER_PER_PX, l_param[t] / METER_PER_PX)
-        else:
-            scale = s_param[t] / METER_PER_PX
+    # 下一帧摆端位置（用角速度积分）
+        x_next = pivot[0] + L * np.sin(theta[t] + omega[t] * DT)
+        y_next = pivot[1] - L * np.cos(theta[t] + omega[t] * DT)
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
-        print(theta,"theta[t]")
-        flows[t, 0, mask] = dx
-        flows[t, 1, mask] = dy
+    # 坐标转换到像素
+        cx, cy = x_t / METER_PER_PX, H - (y_t / METER_PER_PX)
+        nx, ny = x_next / METER_PER_PX, H - (y_next / METER_PER_PX)
+
+
+        scale_m = z0_vals[6]  # z0[6] 对应的 scale/半径（单位米）
+        radius_px = int(scale_m / METER_PER_PX)
+        mask = (X - cx)**2 + (Y - cy)**2 <= radius_px**2
+
+    # 整个 mask 内速度一致
+        flows[t, 0, mask] = nx - cx
+        flows[t, 1, mask] = ny - cy
+
+
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
 
@@ -197,7 +216,7 @@ for cfg in config_list:
         visualize=True,
         save_files=True,
         noise_channels=16,
-        output_folder=f"inference/dec/NoiseWarp_{cfg['output_name']}",
+        output_folder=f"inference/circle/NoiseWarp_{cfg['output_name']}",
         resize_frames=1,
         resize_flow=1,
         downscale_factor=4,
@@ -620,30 +639,31 @@ def main(
 
 if __name__ == "__main__":
     # 多个 prompts
+
     prompt_list = [
-    "A red sedan decelerating on a wet city street, light reflecting off the road surface, buildings in the background, captured from a fixed roadside camera.",
-    "A silver sports car slowing down on an empty rural road at dusk, wet road reflecting the orange sunset, trees and farmland along the roadside, viewed from a stationary side-angle camera.",
-    "A yellow city bus slowing down at a traffic light on an urban street, pedestrians crossing nearby, wet pavement reflecting the sky, observed from a stationary traffic camera above the street.",
-    "A red long-distance bus decelerating on a highway, road signs and streetlights nearby, distant city skyline in view, captured from a fixed roadside camera.",
-    "A blue pickup truck slowing down on a rural road, farmland and trees along the roadside, wind gently moving leaves, sunlight from the side, captured from a stationary roadside camera.",
-    "A white pickup truck decelerating on a gravel road, small dust clouds settling behind, hills and sparse vegetation in the background, viewed from a fixed side camera.",
-    "A white speedboat slowing down on a lake, waves gradually calming behind the boat, shorelines and distant mountains in view, clear sunlight, observed from a fixed camera on the shore.",
-    "A yellow small speedboat decelerating on the sea, long trails of water calming down behind the boat, slightly wavy surrounding sea, distant blurred coastline and docked sailboats visible, captured from a stationary pier camera.",
-    "A commercial jet decelerating after landing on the runway, runway lights visible, airport buildings in the background, heat haze above the tarmac, captured from a fixed side camera.",
-    "A gray fighter jet slowing down on a military airstrip, exhaust flames fading, mountains and hangars in the distance, partly cloudy sky, motion blur on the surrounding ground, viewed from a stationary side camera.",
-    "A red bowling ball rolling down a polished wooden lane and slowing before reaching the pins, reflections on the lane surface, captured from a fixed camera above the lane.",
-    "A blue bowling ball decelerating on a glossy bowling lane, spinning slightly, lane markings and pins visible in the distance, viewed from a stationary side camera."
+    "A small planet (Earth) moves smoothly around a bright star (Sun), seen from above. The planet travels along a circular path at a constant speed, without showing any lines or trails. The Sun remains stationary in the center.",
+    "A tiny moon rotates along a perfect circular orbit around a large planet, viewed from directly above. The motion is smooth, background stars twinkle softly, with no trails or streaks.",
+    "A small satellite revolves around a bright planet along a clean circular orbit. The camera views from above, showing precise motion without motion blur.",
+    "A comet with a glowing tail orbits a distant star along a stable circular path. A top-down perspective emphasizes the symmetrical orbit and the stationary central star.",
+    "A miniature spacecraft circles a glowing asteroid along a perfect circular trajectory. The top-down camera captures the clear orbital motion without any streaks.",
+    "A small artificial satellite revolves around a central planet. Shot from a vertical top-down perspective.",
+    "A tiny ball hangs on a thin string and rotates in a horizontal circle. The camera observes from above, capturing the smooth circular motion without leaving trails.",
+    "A glowing particle orbits the center of a small gravitational system along a precise circular path. A top-down view emphasizes the symmetry of the motion.",
+    "A ring of ice fragments rotates around a bright planet, maintaining a perfect circle. The top-down perspective shows each fragment moving smoothly along the orbit.",
+    "A toy planet is tethered by a string, rotating around a central pivot on a horizontal plane. A fixed top-down camera displays smooth, single-plane motion.",
+    "A tiny asteroid rotates around a dwarf star along a circular orbit. The top-down camera captures the clean, continuous trajectory without trails.",
+    "A small satellite orbits a space station along a horizontal circular path. The top-down view emphasizes consistent, smooth rotation around the central pivot."
     ]
 
     outputs = []
 
     for cfg in config_list:
         # 生成每个配置对应的 NoiseWarp folder
-        sample_path = f"inference/dec/NoiseWarp_{cfg['output_name']}" 
+        sample_path = f"inference/circle/NoiseWarp_{cfg['output_name']}" 
 
         for i, prompt in enumerate(prompt_list):
             # 每个 prompt 生成的输出 MP4 文件名
-            output_mp4_path = f"inference/dec/{cfg['output_name']}_prompt{i+1}.mp4"
+            output_mp4_path = f"inference/circle/{cfg['output_name']}_prompt{i+1}.mp4"
 
             print(f"Processing config {cfg['output_name']} with prompt {i+1}")
 

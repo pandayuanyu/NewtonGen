@@ -22,11 +22,67 @@ config_list = [
         output_name="set_a"
     ),
     dict(
-        z0=[2.0, 10.0, 10.0, 0.8, 0.0, 0.0, 0.6, 0.8, 0.32],
+        z0=[2.0, 10.0, 5.0, 0.8, 0.0, 0.0, 0.5, 0.8, 0.32],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="circle",
         output_name="set_b"
+    ),
+    dict(
+        z0=[2.5, 8.5, 5.0, 5.0, 0.0, 0.0, 0.4, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="set_c"
+    ),
+    dict(
+        z0=[2.0, 8.0, 10.0, 0.0, 0.0, 0.0, 0.8, 0.8, 0.32],
+        DT=0.01,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="set_d"
+    ),
+    dict(
+        z0=[8.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.9, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="set_e"
+    ),
+    dict(
+        z0=[9.0, 10.0, 4.0, -4.0, 0.0, 0.0, 1.0, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.05,
+        chosen_shape="circle",
+        output_name="set_f"
+    ),
+    dict(
+        z0=[8.0, 7.0, 0.0, 5.0, 0.0, 0.0, 1.0, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="circle",
+        output_name="set_g"
+    ),
+    dict(
+        z0=[2.0, 10.0, 10.0, 0.8, 0.0, 0.0, 1.5, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="circle",
+        output_name="set_h"
+    ),
+    dict(
+        z0=[2.0, 10.0, 5.5, 1.2, 0.0, 0.0, 2.0, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="circle",
+        output_name="set_i"
+    ),
+    dict(
+        z0=[2.0, 10.0, 15.0, 0.8, 0.0, 0.0, 2.6, 0.8, 0.32],
+        DT=0.02,
+        METER_PER_PX=0.1,
+        chosen_shape="circle",
+        output_name="set_j"
     ),
 ]
 
@@ -68,17 +124,28 @@ for cfg in config_list:
     traj_px[:, 3] = -traj_world[:, 3] / METER_PER_PX
     np.save(out_dir / f"traj_pixel_{cfg['output_name']}.npy", traj_px)
 
-    def make_mask(shape, X, Y, cx, cy, scale):
+
+    def make_mask(shape, X, Y, cx, cy, scale, theta=0.0):
         if shape == "circle":
             return (X - cx) ** 2 + (Y - cy) ** 2 <= scale**2
         elif shape == "square":
             return (np.abs(X - cx) <= scale) & (np.abs(Y - cy) <= scale)
         elif shape == "rectangle":
             short_edge, long_edge = scale
-            return (np.abs(X - cx) <= long_edge/2) & (np.abs(Y - cy) <= short_edge/2)
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (np.abs(X_rot) <= long_edge/2) & (np.abs(Y_rot) <= short_edge/2)
         elif shape == "ellipse":
             short_axis, long_axis = scale
-            return ((X - cx)**2)/(long_axis**2) + ((Y - cy)**2)/(short_axis**2) <= 1
+            # 旋转坐标
+            Xr = X - cx
+            Yr = Y - cy
+            X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
+            Y_rot = Xr * np.sin(theta) + Yr * np.cos(theta)
+            return (X_rot**2)/(long_axis**2) + (Y_rot**2)/(short_axis**2) <= 1
         elif shape == "triangle":
             Xr, Yr = X - cx, Y - cy
             h = np.sqrt(3) * scale
@@ -97,8 +164,9 @@ for cfg in config_list:
 
     flows = np.zeros((T_pred, 2, H, W), dtype=np.float32)
     Y, X = np.meshgrid(np.arange(H), np.arange(W), indexing="ij")
-    s_param = np.sqrt(dynamics[:, 6])
+    s_param = dynamics[:, 6]
     l_param = dynamics[:, 7]
+    theta = dynamics[:, 4]
 
     for t in range(T_pred - 1):
         cx, cy = traj_px[t, 0], traj_px[t, 1]
@@ -110,11 +178,13 @@ for cfg in config_list:
         else:
             scale = s_param[t] / METER_PER_PX
 
-        mask = make_mask(chosen_shape, X, Y, cx, cy, scale)
+        mask = make_mask(chosen_shape, X, Y, cx, cy, scale, theta[t])
+        print(theta,"theta[t]")
         flows[t, 0, mask] = dx
         flows[t, 1, mask] = dy
 
     np.save(out_dir / f"flows_dxdy_{cfg['output_name']}.npy", flows)
+
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
@@ -550,7 +620,17 @@ if __name__ == "__main__":
     # 多个 prompts
     prompt_list = [
         "A single apple is thrown at an angle with an initial speed. The camera captures the motion from the side, showing the apple rising, reaching its peak, and then descending under gravity. The scene takes place in a bright open field under a clear blue sky, with soft sunlight casting gentle shadows on the ground. The background shows green grass and distant trees, adding depth and realism.",
-        "A single coconut is thrown at an angle with an initial speed. The camera captures the motion from the side, showing the apple rising, reaching its peak, and then descending under gravity. The scene takes place in a bright open beach under a clear blue sky. The background shows white beach and sea, adding depth and realism."
+        "A single coconut is thrown at an angle with an initial speed. The camera captures the motion from the side, showing the apple rising, reaching its peak, and then descending under gravity. The scene takes place in a bright open beach under a clear blue sky. The background shows white beach and sea, adding depth and realism.",
+        "A soccer ball is kicked at an angle with an initial speed. The camera captures the motion from the side, showing the ball rising, reaching its peak, and descending under gravity. The scene takes place on a sunlit football field with green grass, white boundary lines, and distant goalposts visible in the background, adding depth and realism.",
+        "A basketball is thrown at an angle towards a hoop. The camera captures the side view of the ball rising, reaching its apex, and descending towards the basket. The scene takes place in an indoor gym with polished wooden floors, overhead lights reflecting on the court, and bleachers in the background.",
+        "An orange is tossed at an angle with an initial speed. The camera captures the motion from the side, showing it rising and then falling under gravity. The scene is set in a sunny backyard with a wooden fence and flowerbeds in the background.",
+        "A tennis ball is thrown at an angle, captured from a fixed side camera, showing the parabolic trajectory. The scene takes place on an outdoor tennis court with net, lines, and surrounding trees visible in the distance under bright sunlight.",
+        "A baseball is thrown at an angle with an initial speed. The camera captures its flight from the side, rising and then descending. The scene is set on a baseball field, with dirt infield and green outfield grass, and stadium seats faintly visible in the background.",
+        "A pumpkin is tossed at an angle, side view captured by a stationary camera, rising and descending along a parabolic path. The scene takes place in an autumn farm field, with hay bales and distant barns in the background.",
+        "A bowling ball is rolled at a slight angle with initial speed, captured from a fixed side camera, showing its parabolic arc before hitting the pins. The scene takes place on a polished wooden bowling lane, with lane markings and pins in the background.",
+        "A volleyball is served at an angle, captured from the side by a stationary camera, showing its parabolic flight over the net. The scene is set on an outdoor beach volleyball court, with sand texture, net, and distant palm trees in view.",
+        "A watermelon is thrown at an angle in a park, captured from a fixed side camera, rising and descending along a parabolic path. The scene shows green grass, a few park benches, and trees in the background under bright daylight.",
+        "A golf ball is hit at an angle with initial speed, captured from a side view, showing it ascending, reaching its peak, and then descending under gravity. The scene is set on a sunny golf course, with manicured fairways, sand traps, and distant trees in the background."
     ]
 
     outputs = []
