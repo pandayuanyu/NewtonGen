@@ -5,13 +5,7 @@ from torchdiffeq import odeint
 # --------------------------- General2ndODE ---------------------------
 class General2ndODE(nn.Module):
     """
-    z = [x, y, vx, vy, theta, omega, s, l, a]
-
-    - (x, y, vx, vy): 二阶线性动力学 + residual 修正
-    - (theta, omega): only for 阻尼摆/rotate（线性化）:
-        dtheta/dt = omega
-        domega/dt = - (g/L) * theta - gamma * omega + residual 修正
-    - (s, l, a):  shape related 一阶线性动力学 + residual 修正
+    Z = [x, y, vx, vy, theta, omega, s, l, a]
     """
     def __init__(self, hidden=32):
         super().__init__()
@@ -22,10 +16,10 @@ class General2ndODE(nn.Module):
         self.c_x = nn.Parameter(torch.tensor(0.1))
         self.a_y = nn.Parameter(torch.tensor(0.1))
         self.b_y = nn.Parameter(torch.tensor(0.1))
-        self.c_y = nn.Parameter(torch.tensor(-8.0))
+        self.c_y = nn.Parameter(torch.tensor(-5.0))
 
         # Pendulum params (linearized) for (theta omega)
-        self.g_over_L = nn.Parameter(torch.tensor(9.8/5))
+        self.g_over_L = nn.Parameter(torch.tensor(1.0))
         self.gamma = nn.Parameter(torch.tensor(0.1))
 
         # Linear coeffs for (s, l, a)
@@ -47,7 +41,7 @@ class General2ndODE(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(hidden, 6)  # [ax_res, ay_res, domega_res, ds_res, dl_res, da_res]
         )
-        # 初始化 residual 为 0
+
         for m in self.residual:
             if isinstance(m, nn.Linear):
                 nn.init.zeros_(m.weight)
