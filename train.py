@@ -22,7 +22,7 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------- Load latent dynamics data ----------------
 dynamics_batch = torch.load(
-    ""
+    "physical_labels_parabolic_motion.pt"
 )  # shape (B_total,T,C)
 B_total, T, C = dynamics_batch.shape
 print(f"Loaded training dynamics_batch.pt: shape {dynamics_batch.shape}")
@@ -48,7 +48,7 @@ ts = ts.to(DEVICE)
 
 # ---------------- Weighted MSE function ----------------
 weights = torch.tensor([1.01, 1.01, 1.01, 1.01,   # (x,y,vx,vy)
-                        0.01, 0.01,              # (theta, omega)
+                        0.1, 0.1,              # (theta, omega)
                         0.1, 0.1, 0.1],          # (s, l, a)
                        device=DEVICE)
 
@@ -112,7 +112,7 @@ for epoch in range(1, EPOCHS + 1):
         model.eval()
         with torch.no_grad():
             dynamics_batch_val = torch.load(
-                ""
+                "GT physical labels for Validation.pt"
             )
             dynamics_batch_val = dynamics_batch_val[:, :, :9].to(DEVICE)
             z0_val = dynamics_batch_val[:, 0, :]

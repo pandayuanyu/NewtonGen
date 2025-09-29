@@ -8,84 +8,35 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("")
+MODEL_PATH = Path("to/learned_dynamics/learnedODE_rotation.pth")
 
 config_list = [
-    dict(
-        z0=[6.9623, 5.1832, 0.0, 0.0, 0.75, 2.6332, 0.5743, 3.5814, 2.0553],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_b"
-    ),
     dict(
         z0=[7.0343, 6.4127, 0.0, 0.0, 1.57, 2.552, 0.8842, 2.4756, 2.1881],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="set_c"
+        output_name="set_a"
     ),
     dict(
         z0=[8.7657, 6.4994, 0.0, 0.0, 0.0, 3.4044, 0.5123, 2.5514, 1.3057],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="set_e"
-    ),
-    dict(
-        z0=[9.4828, 5.3771, 0.0, 0.0, 0.0, 2.7272, 0.8675, 3.2521, 2.8205],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_f"
-    ),
-    dict(
-        z0=[8.9623, 5.1832, 0.0, 0.0, 1.75, 2.6332, 0.6743, 3.5814, 2.0553],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_m"
-    ),
+        output_name="set_b"
+    )
     dict(
         z0=[9.0343, 6.4127, 0.0, 0.0, 1.57, 2.552, 0.8842, 3.4756, 2.1881],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="set_n"
-    ),
-    dict(
-        z0=[10.9623, 5.1832, 0.0, 0.0, 0.25, 2.6332, 0.5743, 5.5814, 2.0553],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_o"
-    ),
-    dict(
-        z0=[12.0343, 6.4127, 0.0, 0.0, 1.07, 3.552, 0.8842, 4.4756, 2.1881],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_p"
-    ),
-    dict(
-        z0=[9.9623, 5.1832, 0.0, 0.0, 0.705, 2.6332, 0.5743, 3.5814, 2.0553],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_q"
-    ),
-    dict(
-        z0=[8.0343, 6.4127, 0.0, 0.0, 1.57, 1.552, 0.8842, 2.8756, 2.1881],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="set_r"
-    ),
+        output_name="set_c"
+    )
 ]
 
 
-
-T_pred = 48
+# ---------------- STEP 1: Predict the future physical states by NND ----------------
+T_pred = 48  # 48 time stamps we need to predict
 H, W = 240, 360
 
 model = NewtonODELatent().to(DEVICE)
@@ -225,7 +176,8 @@ for cfg in config_list:
 
 
 
-
+    # ---------------- STEP 3: generate videos ----------------
+    # revised from https://github.com/Eyeline-Labs/Go-with-the-Flow/blob/main/cut_and_drag_inference.py
 import torch
 import numpy as np
 import einops
@@ -249,12 +201,12 @@ random.seed(seed)
 
 
 pipe_ids = dict(
-    T2V5B="/home/yuan418/data/project/THUT2V5b/ckpts/",
+    T2V5B="/home/to/THUT2V5b/ckpts/",
 )
 
 # From a bird's-eye view, a serene scene unfolds: a herd of deer gracefully navigates shallow, warm-hued waters, their silhouettes stark against the earthy tones. The deer, spread across the frame, cast elongated, well-defined shadows that accentuate their antlers, creating a mesmerizing play of light and dark. This aerial perspective captures the tranquil essence of the setting, emphasizing the harmonious contrast between the deer and their mirror-like reflections on the water's surface. The composition exudes a peaceful stillness, yet the subtle movement suggested by the shadows adds a dynamic layer to the natural beauty and symmetry of the moment.
 lora_urls = dict(
-    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/yuan418/data/project/goflow/lora_models/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
+    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/to/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
 )
 
 
@@ -626,8 +578,6 @@ if __name__ == "__main__":
     "A pencil rotating smoothly on a wooden desk, casting long shadows from sunlight streaming through the window, viewed from a stationary top-down camera, with papers and books scattered nearby.",
     "A slim wooden stick rotating on a grassy field, subtle motion blur, wildflowers and leaves around, captured from a fixed top-down camera.",
     "A plastic straw spinning slowly on a marble countertop, water droplets nearby, reflections shimmering, captured from a top-down stationary camera.",
-    "A toothbrush spinning on a bathroom sink, with soap and towels in the background, subtle reflections, viewed from a fixed top-down camera.",
-    "A thin ruler rotating in mid-air above a classroom desk, books and notebooks in the background, gentle motion blur, captured from a fixed overhead camera.",
     "A chopstick spinning slowly above a dining table, dishes and utensils around, reflections on the polished surface, captured from a fixed top-down camera.",
     "A screwdriver rotating slowly on a workbench, scattered bolts and nuts around, illuminated by a desk lamp, captured from a stationary overhead camera.",
     "A slim paintbrush spinning on an artist’s wooden table, with paint tubes and sketches scattered around, soft natural light from a window, viewed from a top-down camera.",

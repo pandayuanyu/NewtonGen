@@ -9,7 +9,7 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("")
+MODEL_PATH = Path("to/learned_dynamics/learnedODE_parabolic_motion_with_rotation.pth")
 
 
 config_list = [
@@ -18,74 +18,26 @@ config_list = [
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="sample_c"
+        output_name="sample_a"
     ),
     dict(
         z0=[7.8806, 9.7676, 2.522, 0.0129, 0.0054, 1.8695, 0.4123, 4.0393, 0.8411],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="sample_d"
+        output_name="sample_b"
     ),
     dict(
         z0=[8.9194, 8.9448, -0.5455, 0.1046, 0.3854, -1.8025, 0.5945, 2.6661, 1.5843],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="rectangle",
-        output_name="sample_e"
-    ),
-    dict(
-        z0=[10.0593, 7.6838, 5.3273, -0.5413, 0.2854, 2.1053, 0.7291, 2.1594, 1.5741],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_f"
-    ),
-    dict(
-        z0=[9.7433, 8.861, 3.6768, 3.5439, 0.1854, 1.8062, 0.332, 2.3461, 2.1883],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_g"
-    ),
-    dict(
-        z0=[5.7607, 9.3361, 7.2204, 3.5948, 0.054, 2.8098, 0.8215, 3.9706, 2.4396],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_h"
-    ),
-    dict(
-        z0=[6.9782, 9.5492, 3.2853, 2.2474, 0.1, 0.8301, 0.6984, 2.5952, 1.8117],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_j"
-    ),
-    dict(
-        z0=[8.9194, 8.9448, 4.5455, -1.1046, 0.0854, 2.8025, 0.5945, 2.6661, 1.5843],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_m"
-    ),
-    dict(
-        z0=[8.9194, 8.9448, 4.5455, 2.1046, 0.0854, 2.025, 0.5945, 2.6661, 1.5843],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_n"
-    ),
-    dict(
-        z0=[8.9194, 8.9448, 6.5455, 3.1046, 0.3854, 4.8025, 0.345, 2.6661, 1.5843],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="rectangle",
-        output_name="sample_o"
-    ),
+        output_name="sample_c"
+    )
 ]
 
 
+# ---------------- STEP 1: Predict the future physical states by NND ----------------
 T_pred = 48
 H, W = 240, 360
 
@@ -224,6 +176,8 @@ for cfg in config_list:
     )
 
 
+    # ---------------- STEP 3: generate videos ----------------
+    # revised from https://github.com/Eyeline-Labs/Go-with-the-Flow/blob/main/cut_and_drag_inference.py
 import torch
 import numpy as np
 import einops
@@ -246,12 +200,12 @@ random.seed(seed)
 
 
 pipe_ids = dict(
-    T2V5B="/home/yuan418/data/project/THUT2V5b/ckpts/",
+    T2V5B="/home/to/THUT2V5b/ckpts/",
 )
 
 # From a bird's-eye view, a serene scene unfolds: a herd of deer gracefully navigates shallow, warm-hued waters, their silhouettes stark against the earthy tones. The deer, spread across the frame, cast elongated, well-defined shadows that accentuate their antlers, creating a mesmerizing play of light and dark. This aerial perspective captures the tranquil essence of the setting, emphasizing the harmonious contrast between the deer and their mirror-like reflections on the water's surface. The composition exudes a peaceful stillness, yet the subtle movement suggested by the shadows adds a dynamic layer to the natural beauty and symmetry of the moment.
 lora_urls = dict(
-    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/yuan418/data/project/goflow/lora_models/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
+    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/to/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
 )
 
 
@@ -280,7 +234,7 @@ def get_pipe(model_name, device=None, low_vram=True):
         lora_name = model_name
         pipe_name = lora_name.split('_')[0]
 
-    is_i2v = "I2V" in pipe_name  # This is a convention I'm using right now
+    is_i2v = "I2V" in pipe_name
 
     pipe_id = pipe_ids[pipe_name]
     print(f"LOADING PIPE WITH device={device} pipe_name={pipe_name} pipe_id={pipe_id} lora_name={lora_name}" )
@@ -298,7 +252,7 @@ def get_pipe(model_name, device=None, low_vram=True):
         lora_folder = rp.make_directory('lora_models')
         lora_url = lora_urls[lora_name]
 
-        lora_path = lora_url  # 直接使用本地路径
+        lora_path = lora_url
         assert rp.file_exists(lora_path), (lora_name, lora_path)
 
 
@@ -632,13 +586,11 @@ if __name__ == "__main__":
     "A chalkboard eraser spinning while falling in a tilted arc, side camera captures, scattered chalk pieces in the classroom background, realistic shadows and lighting.",
     "A wooden pencil is thrown at an angle, rotating as it falls. Captured from a side camera, scattered papers and books on the desk add depth and realism to the scene.",
     "A wooden stick is thrown with an initial velocity, rotating as it falls. Captured from a side camera, the ground has grass and fallen leaves as the background.",
-    "A cylindrical cup tilts and falls, spinning along its vertical axis. Captured from a side camera, the kitchen countertop and dishes are visible in the background.",
     "A chopstick is thrown at an angle, rotating while falling. Captured from a side camera, the dining table and scattered plates add realism to the scene.",
     "A pen is thrown at an angle, rotating as it falls. Captured from a side camera, the notebook and desk provide background details and depth.",
     "A thin wooden dowel falls with an initial velocity, rotating as it descends. Captured from a side camera, a picnic table and scattered leaves are visible.",
     "A cylindrical plastic cup tilts and falls, rotating in mid-air. Captured from a side camera, the kitchen countertop and scattered utensils appear in the scene.",
     "A paintbrush is thrown at an angle, rotating while falling. Captured from a side camera, the artist’s desk with palette and papers serves as background.",
-    "A wooden skewer is thrown at an angle, rotating as it falls. Captured from a side camera, a cutting board with scattered fruits is visible in the scene.",
     "A pen or pencil tilts and falls, rotating in mid-air. Captured from a side camera, scattered papers and books in the background emphasize depth and motion."
     ]
 

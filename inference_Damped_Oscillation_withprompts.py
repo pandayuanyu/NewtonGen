@@ -8,11 +8,11 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("")
+MODEL_PATH = Path("to/learned_dynamics/learnedODE_damped_oscillation.pth")
 
 config_list = [
     dict(
-        z0=[6.3029, 4.4684, 6.0275, -2.1584, -0.3439, 0.8003, 0.6122, 1.122, 0.9887],
+        z0=[6.3029, 4.4684, 6.0275, -2.1584, -0.3439, 1.5003, 0.6122, 1.122, 0.9887],
         DT=0.02,
         METER_PER_PX=0.05,
         chosen_shape="circle",
@@ -31,61 +31,14 @@ config_list = [
         METER_PER_PX=0.05,
         chosen_shape="circle",
         output_name="sample_c"
-    ),
-    dict(
-        z0=[6.6105, 4.3652, 1.4274, -0.4467, -0.1033, 1.187, 1.022, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_d"
-    ),
-    dict(
-        z0=[4.8, 5.1912, 6.1521, -3.7949, -0.5527, 1.9035, 0.422, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_e"
-    ),
-    dict(
-        z0=[7.3029, 4.4684, 6.0275, -2.1584, -0.3439, 2.8003, 0.6122, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_m"
-    ),
-    dict(
-        z0=[7.3052, 4.4675, 2.6865, -0.9611, -0.3436, 2.3567, 0.422, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_n"
-    ),
-    dict(
-        z0=[6.5773, 4.3757, 1.5605, -0.4959, -0.4077, 3.2047, 0.632, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_o"
-    ),
-    dict(
-        z0=[6.6105, 4.3652, 1.4274, -0.4467, -0.1033, 3.187, 1.022, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_p"
-    ),
-    dict(
-        z0=[7.8, 5.1912, 6.1521, -3.7949, -0.5527, 2.9035, 0.422, 1.122, 0.9887],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="sample_q"
-    ),
-
+    )
 ]
 
 
-T_pred = 48
+
+# ---------------- STEP 1: Predict the future physical states by NND ----------------
+
+T_pred = 48  # 48 time stamps we need to predict
 H, W = 240, 360
 
 model = NewtonODELatent().to(DEVICE)
@@ -216,7 +169,8 @@ for cfg in config_list:
 
 
 
-
+    # ---------------- STEP 3: generate videos ----------------
+    # revised from https://github.com/Eyeline-Labs/Go-with-the-Flow/blob/main/cut_and_drag_inference.py
 import torch
 import numpy as np
 import einops
@@ -238,12 +192,12 @@ random.seed(seed)
 
 
 pipe_ids = dict(
-    T2V5B="/home/yuan418/data/project/THUT2V5b/ckpts/",
+    T2V5B="/home/to/THUT2V5b/ckpts/",
 )
 
 # From a bird's-eye view, a serene scene unfolds: a herd of deer gracefully navigates shallow, warm-hued waters, their silhouettes stark against the earthy tones. The deer, spread across the frame, cast elongated, well-defined shadows that accentuate their antlers, creating a mesmerizing play of light and dark. This aerial perspective captures the tranquil essence of the setting, emphasizing the harmonious contrast between the deer and their mirror-like reflections on the water's surface. The composition exudes a peaceful stillness, yet the subtle movement suggested by the shadows adds a dynamic layer to the natural beauty and symmetry of the moment.
 lora_urls = dict(
-    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/yuan418/data/project/goflow/lora_models/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
+    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/to/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
 )
 
 
@@ -611,12 +565,10 @@ if __name__ == "__main__":
 
     prompt_list = [
     "A realistic pendulum with a spherical bob swinging from a fixed pivot. The fixed camera captures the entire motion.",
-    "A small metal weight suspended from the ceiling by a thin string, swinging with damping. The fixed camera captures realistic shadows and reflections.",
     "A delicate crystal ornament hanging from a fine string, swinging slowly. The fixed camera emphasizes light refraction and motion decay.",
     "A small glass ball hanging at the end of a thin string, swinging only once. The quiet scene and natural light highlight realism.",
     "A small wooden ball hanging from a thin string, swaying. The fixed camera captures the smooth arc and natural shadows.",
     "A small decorative bell hanging from a fine chain. The fixed camera captures realistic material and shadows.",
-    "A lightweight clay figurine hanging from a string, swinging. The fixed camera showcases realistic physics.",
     "A small metal ball hanging from a thin string, swinging slowly once with damping. The fixed camera emphasizes realistic physical motion.",
     "A spherical ornament hanging from a fine string, swinging. The fixed camera captures subtle reflections and motion decay.",
     "A small rubber ball hanging from a string, swinging freely. The fixed camera captures smooth motion and natural lighting.",

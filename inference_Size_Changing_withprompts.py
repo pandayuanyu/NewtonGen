@@ -8,7 +8,7 @@ from models.nnd import NewtonODELatent
 import rp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = Path("")
+MODEL_PATH = Path("to/learned_dynamics/learnedODE_size_changing.pth")
 
 
 config_list = [
@@ -32,60 +32,12 @@ config_list = [
         METER_PER_PX=0.05,
         chosen_shape="circle",
         output_name="set_c"
-    ),
-    dict(
-        z0=[7.8777, 5.4010, 0.0, 0.0, 0.0, 0.0, 0.3218, 0.3218, 0.1628],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_d"
-    ),
-    dict(
-        z0=[8.3346, 6.7342, 0.0, 0.0, 0.0, 0.0, 0.5936, 0.5936, 0.5534],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_e"
-    ),
-    dict(
-        z0=[9.2809, 5.9461, 0.0, 0.0, 0.0, 0.0, 0.1276, 0.1276, 1.9976],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_f"
-    ),
-    dict(
-        z0=[10.0759, 5.0603, 0.0, 0.0, 0.0, 0.0, 0.4828, 0.4828, 0.366],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_g"
-    ),
-    dict(
-        z0=[11.4364, 5.0559, 0.0, 0.0, 0.0, 0.0, 0.2457, 0.2457, 0.328],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_h"
-    ),
-    dict(
-        z0=[11.4629, 6.2376, 0.0, 0.0, 0.0, 0.0, 1.12, 1.12, 1.9702],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_i"
-    ),
-    dict(
-        z0=[11.9719, 5.7067, 0.0, 0.0, 0.0, 0.0, 0.124, 0.124, 2.2332],
-        DT=0.02,
-        METER_PER_PX=0.05,
-        chosen_shape="circle",
-        output_name="set_j"
-    ),
+    )
 ]
 
 
-T_pred = 48
+# ---------------- STEP 1: Predict the future physical states by NND ----------------
+T_pred = 48  # 48 time stamps we need to predict
 H, W = 240, 360
 
 model = NewtonODELatent().to(DEVICE)
@@ -209,7 +161,8 @@ for cfg in config_list:
 
 
 
-
+    # ---------------- STEP 3: generate videos ----------------
+    # revised from https://github.com/Eyeline-Labs/Go-with-the-Flow/blob/main/cut_and_drag_inference.py
 import torch
 import numpy as np
 import einops
@@ -242,12 +195,12 @@ random.seed(seed)
 #)
 
 pipe_ids = dict(
-    T2V5B="/home/yuan418/data/project/THUT2V5b/ckpts/",
+    T2V5B="/home/to/THUT2V5b/ckpts/",
 )
 
 # From a bird's-eye view, a serene scene unfolds: a herd of deer gracefully navigates shallow, warm-hued waters, their silhouettes stark against the earthy tones. The deer, spread across the frame, cast elongated, well-defined shadows that accentuate their antlers, creating a mesmerizing play of light and dark. This aerial perspective captures the tranquil essence of the setting, emphasizing the harmonious contrast between the deer and their mirror-like reflections on the water's surface. The composition exudes a peaceful stillness, yet the subtle movement suggested by the shadows adds a dynamic layer to the natural beauty and symmetry of the moment.
 lora_urls = dict(
-    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/yuan418/data/project/goflow/lora_models/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
+    T2V5B_blendnorm_i18000_DATASET_lora_weights   = '/home/to/T2V5B_blendnorm_i18000_DATASET_lora_weights.safetensors',
 )
 
 
@@ -625,8 +578,6 @@ if __name__ == "__main__":
     "A purple balloon slowly inflating on a wooden picnic table near a lake, reflections of trees and water on the table, distant mountains visible, captured from a fixed camera on the shore.",
     "A white balloon inflating in a cozy living room, sunlight coming through curtains, sofa and bookshelf visible in the background, observed from a fixed corner camera.",
     "A metallic silver balloon gradually expanding in a festive hall, fairy lights and streamers in the background, colorful reflections on the floor, captured from a stationary overhead camera.",
-    "A multicolored balloon inflating in a school playground, children running around, slides and swings visible, sunlight casting long shadows, observed from a high-angle camera.",
-    "A large red party balloon slowly inflating on a balcony terrace, city rooftops and distant skyscrapers visible, potted plants and railing in the foreground, captured from a side camera."
     ]
 
 
