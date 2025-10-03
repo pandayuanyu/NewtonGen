@@ -1,7 +1,7 @@
 This repository is the official implementation of [NewtonGen](https://arxiv.org/abs/2509.21309).
 
 > **NewtonGen: Physics-Consistent and Controllable Text-to-Video Generation via Neural Newtonian Dynamics** <br>
-> [Yu Yuan](https://yuanyuspace.cn/about/), [Xijun Wang](https://xijun-w.github.io/), [Tharindu Wickremasinghe](https://tharindu-nirmal.github.io/), [Zeeshan Nadir](https://www.linkedin.com/in/zeeshan-nadir), [Bole Ma](https://engineering.purdue.edu/ChanGroup/people.html), [Stanley H. Chan](https://engineering.purdue.edu/ChanGroup/stanleychan.html)<br>
+> [Yu Yuan](https://yuyuan-space.github.io/), [Xijun Wang](https://xijun-w.github.io/), [Tharindu Wickremasinghe](https://tharindu-nirmal.github.io/), [Zeeshan Nadir](https://www.linkedin.com/in/zeeshan-nadir), [Bole Ma](https://engineering.purdue.edu/ChanGroup/people.html), [Stanley H. Chan](https://engineering.purdue.edu/ChanGroup/stanleychan.html)<br>
 
 [![Arxiv](https://img.shields.io/badge/arXiv-2509.21309-b31b1b.svg?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2509.21309)
 [![Project Page](https://img.shields.io/badge/Project-Page-green?style=for-the-badge)](https://yuyuan-space.github.io/NewtonGen/)
