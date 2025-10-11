@@ -59,7 +59,11 @@ There are 3 types of weights you need to download/prepare.
   These require separate handling because different parts of the object move in different directions. Each has its own inference script.
 
 ### 2. Modify the Models and Weights Root
-Set all the *MODEL_PATH*, *sample_path=sample_path*, *output_mp4_path* and other roots to your own ones in the `inference_xx.py` 
+Set all the *MODEL_PATH*, *sample_path=sample_path*, *output_mp4_path* and other roots to your own ones in the `inference_xx.py`.
+
+We have provided the well-trained NND weights at folder `learned_dynamics`.  
+
+
 
 
 ### 3. Modify the Configuration and Prompts
