@@ -33,7 +33,9 @@ conda create -n newtongen python=3.10
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1
 conda activate newtongen
 
-cd 'where_you_clone_NewtonGen' 
+
+git clone https://github.com/pandayuanyu/NewtonGen.git
+cd NewtonGen
 pip install -r requirements.txt
 ```
 
