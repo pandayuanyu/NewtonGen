@@ -88,8 +88,7 @@ python inference_xx.py
 <summary>Click to expand</summary>
 
 ### 1. Prepare Physics-Clean Videos
-Run the scripts in folder `data_simulation`. We also provide the simulation samples in the folder.  
-You can 
+Run the scripts in folder `data_simulation`. We also provide some simulated samples in the folder.  
 
 ### 2. Encode the Physics-Clean Videos into Physical States Labels
 Run the script in folder `physical_encoder`. For Circular Motion and Damped Oscillation, please use `phys_encoder_circular_oscillation.py`, all other motions, please use `phys_encoder.py`.
