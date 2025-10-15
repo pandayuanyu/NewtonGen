@@ -61,7 +61,7 @@ There are 3 types of weights you need to download/prepare.
 ### 1. Choose the Motion You Need
 
 - **Linear motions** (uniform motion, acceleration, deceleration, 3D motion, slope sliding, parabolic motion)  
-  Use `inference_linear_withprompts.py` since the object can be treated as a whole when rendering optical flow.
+  Use `inference_Linear_withprompts.py` since the object can be treated as a whole when rendering optical flow.
 
 - **Other motions** (rotation, size changing, parabolic motion with rotation, damped oscillation)  
   These require separate handling because different parts of the object move in different directions. Each has its own inference script.
