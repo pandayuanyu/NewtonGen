@@ -45,7 +45,7 @@ state_dict = torch.load(MODEL_PATH, map_location=DEVICE)
 model.load_state_dict(state_dict)
 model.eval()
 
-# 遍历每个配置
+
 for cfg in config_list:
     print(f"Processing config: {cfg['output_name']}")
 
@@ -143,6 +143,9 @@ for cfg in config_list:
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
+    ##### you need to put the provided 'git' folder under where your 'rp' located  
+
+
     flows_path = str(out_dir / f"flows_dxdy_{cfg['output_name']}.npy")
     T_minus_1, _, H, W = flows.shape
     video = np.zeros((T_minus_1 + 1, H, W, 3), dtype=np.uint8)
@@ -247,7 +250,7 @@ def get_pipe(model_name, device=None, low_vram=True):
         lora_folder = rp.make_directory('lora_models')
         lora_url = lora_urls[lora_name]
 
-        lora_path = lora_url  # 直接使用本地路径
+        lora_path = lora_url  
         assert rp.file_exists(lora_path), (lora_name, lora_path)
 
 

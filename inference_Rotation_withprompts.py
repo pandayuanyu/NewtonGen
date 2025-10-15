@@ -80,7 +80,7 @@ for cfg in config_list:
             return (np.abs(X - cx) <= scale) & (np.abs(Y - cy) <= scale)
         elif shape == "rectangle":
             short_edge, long_edge = scale
-            # 旋转坐标
+    
             Xr = X - cx
             Yr = Y - cy
             X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
@@ -88,7 +88,7 @@ for cfg in config_list:
             return (np.abs(X_rot) <= long_edge/2) & (np.abs(Y_rot) <= short_edge/2)
         elif shape == "ellipse":
             short_axis, long_axis = scale
-            # 旋转坐标
+     
             Xr = X - cx
             Yr = Y - cy
             X_rot = Xr * np.cos(theta) - Yr * np.sin(theta)
@@ -158,6 +158,9 @@ for cfg in config_list:
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
+     ##### you need to put the provided 'git' folder under where your 'rp' located  
+
+     
     flows_path = str(out_dir / f"flows_dxdy_{cfg['output_name']}.npy")
     T_minus_1, _, H, W = flows.shape
     video = np.zeros((T_minus_1 + 1, H, W, 3), dtype=np.uint8)

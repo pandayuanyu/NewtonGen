@@ -39,6 +39,12 @@ cd NewtonGen
 pip install -r requirements.txt
 ```
 
+One more step: you need to move the folder `git` under where you install package `rp`, we can check the location of `rp` by 
+```bash
+pip show rp
+```
+Once finished, you can see the path like `virtual_envs/newtongen/lib/python3.10/site-packages/rp/git/CommonSource/` 
+
 
 ### 2. Prepare Models and Weights
 There are 3 types of weights you need to download/prepare.

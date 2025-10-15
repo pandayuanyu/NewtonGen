@@ -159,6 +159,9 @@ for cfg in config_list:
 
     # ---------------- STEP 2: NoiseWarp ----------------
     import rp.git.CommonSource.noise_warp_new as nw
+     ##### you need to put the provided 'git' folder under where your 'rp' located  
+
+     
     flows_path = str(out_dir / f"flows_dxdy_{cfg['output_name']}.npy")
     T_minus_1, _, H, W = flows.shape
     video = np.zeros((T_minus_1 + 1, H, W, 3), dtype=np.uint8)
