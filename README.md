@@ -11,7 +11,7 @@ This repository is the official implementation of [NewtonGen](https://arxiv.org/
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1-EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org)
 [![Python](https://img.shields.io/badge/python-3.10-blue?style=for-the-badge)](https://www.python.org)
 
-![GenPhoto Example](project_page/teaser.png)
+![NewtonGen Example](project_page/teaser.png)
 
 
 
