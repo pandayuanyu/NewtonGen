@@ -137,7 +137,7 @@ If you feel this project helpful/insightful, please cite our paper:
 ```bibtex
 @article{Yuan_2025_NewtonGen,
   title={{NewtonGen}: Physics-Consistent and Controllable Text-to-Video Generation via Neural Newtonian Dynamics},
-  author={Yuan, Yu and Wang, Xijun and Wickremasinghe, Tharindu and Nadir, Zeeshan and Ma, Bole and Chan, Stanley},
+  author={Yuan, Yu and Wang, Xijun and Wickremasinghe, Tharindu and Nadir, Zeeshan and Ma, Bole and Chan, Stanley H.},
   journal={arXiv preprint arXiv: 2509.21309},
   year={2025}
 }
