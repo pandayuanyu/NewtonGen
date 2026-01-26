@@ -5,7 +5,7 @@ This repository is the official implementation of [NewtonGen](https://arxiv.org/
 
 [![Arxiv](https://img.shields.io/badge/arXiv-2509.21309-b31b1b.svg?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2509.21309)
 [![Project Page](https://img.shields.io/badge/Project-Page-green?style=for-the-badge)](https://yuyuan-space.github.io/NewtonGen/)
-[![OpenReview](https://img.shields.io/badge/OpenReview-green?style=for-the-badge)](https://openreview.net/forum?id=rJ6N6sunaU)
+[![OpenReview](https://img.shields.io/badge/ICLR-OpenReview-green?style=for-the-badge)](https://openreview.net/forum?id=rJ6N6sunaU)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face%20(soon)-Demo-FF4F1D.svg?style=for-the-badge&logo=Huggingface)](https://huggingface.co/spaces/pandaphd/generative_photography)
 
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1-EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org)
