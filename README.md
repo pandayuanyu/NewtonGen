@@ -15,7 +15,7 @@ This repository is the official implementation of [NewtonGen](https://arxiv.org/
 
 
 ## 🔥 Latest News!
-* [Jan 26, 2026]: Accepted by ICLR 2026 !
+* [Jan 26, 2026]: Accepted by ICLR 2026!
 * [Sep 29, 2025]: Create Project Page.
 * [Sep 28, 2025]: Update the detailed README.
 * [Sep 25, 2025]: Release the official code.
@@ -135,7 +135,7 @@ We thank [Go-with-the-Flow](https://github.com/Eyeline-Labs/Go-with-the-Flow) fo
 If you feel this project helpful/insightful, please cite our paper:
 ```bibtex
 @article{Yuan_2025_NewtonGen,
-  title={NewtonGen: Physics-Consistent and Controllable Text-to-Video Generation via Neural Newtonian Dynamics},
+  title={{NewtonGen}: Physics-Consistent and Controllable Text-to-Video Generation via Neural Newtonian Dynamics},
   author={Yuan, Yu and Wang, Xijun and Wickremasinghe, Tharindu and Nadir, Zeeshan and Ma, Bole and Chan, Stanley},
   journal={arXiv preprint arXiv: 2509.21309},
   year={2025}
