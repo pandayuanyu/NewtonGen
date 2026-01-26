@@ -15,6 +15,7 @@ This repository is the official implementation of [NewtonGen](https://arxiv.org/
 
 
 ## 🔥 Latest News!
+* [Jan 26, 2026]: Accepted by ICLR 2026 !
 * [Sep 29, 2025]: Create Project Page.
 * [Sep 28, 2025]: Update the detailed README.
 * [Sep 25, 2025]: Release the official code.
