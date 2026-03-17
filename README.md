@@ -32,8 +32,9 @@ This repository is the official implementation of [NewtonGen](https://arxiv.org/
 * Users can use the following commands to install the packages
 ```bash
 conda create -n newtongen python=3.10
-pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1
 conda activate newtongen
+pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1
+
 
 
 git clone https://github.com/pandayuanyu/NewtonGen.git
